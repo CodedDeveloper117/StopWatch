@@ -1,6 +1,7 @@
 package com.coded.stopwatch.ui
 
 import android.os.Build
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -11,25 +12,25 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-object StopWatch {
+class StopWatch {
 
-    private var formattedTime by mutableStateOf("00:00:00")
-    private var isActive by mutableStateOf(false)
+    var formattedTime by mutableStateOf("00:00:00")
+    var isActive by mutableStateOf(false)
+    var isZero by mutableStateOf(true)
     private var timeMillis = 0L
-    private var scope = CoroutineScope(Dispatchers.Main)
     private var lastTimestamp = 0L
 
-    fun start() {
+    suspend fun start() {
         if(isActive) return
-        scope.launch {
+        lastTimestamp = System.currentTimeMillis()
+        isActive = true
+        isZero = false
+        while (isActive) {
+            delay(10L)
+            timeMillis = timeMillis + System.currentTimeMillis() - lastTimestamp
             lastTimestamp = System.currentTimeMillis()
-            this@StopWatch.isActive = true
-            while (isActive) {
-                delay(10L)
-                timeMillis = timeMillis + System.currentTimeMillis() - lastTimestamp
-                lastTimestamp = System.currentTimeMillis()
-                formattedTime = formatTime(timeMillis)
-            }
+            formattedTime = formatTime(timeMillis)
+            Log.d("Util", "time - $formattedTime")
         }
     }
 
@@ -52,14 +53,14 @@ object StopWatch {
 
     fun pause() {
         isActive = false
+        isZero = false
     }
 
     fun reset() {
-        scope.cancel()
-        scope = CoroutineScope(Dispatchers.Main)
         timeMillis = 0L
         lastTimestamp = 0L
         formattedTime = "00:00.00"
         isActive = false
+        isZero = true
     }
 }
