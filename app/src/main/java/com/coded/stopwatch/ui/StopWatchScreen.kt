@@ -41,14 +41,6 @@ fun StopWatchScreen(
 ) {
 
     val infiniteTransition = rememberInfiniteTransition()
-    val angleValue by infiniteTransition.animateFloat(
-        initialValue = 270f,
-        targetValue = 530f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1000, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
-        )
-    )
 
     val blurValue by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -126,24 +118,7 @@ fun StopWatchScreen(
                         drawPoints(
                             listOf(Offset(center.x, 0f)),
                             pointMode = PointMode.Points,
-                            color = PrimaryPink,
-                            strokeWidth = (30f),
-                            cap = StrokeCap.Round
-                        )
-                        val angle = 270 * (PI / 180)
-                        val radius = size.width / 2
-                        val a = radius * cos(angle)
-                        val b = radius * sin(angle)
-                        Log.d(
-                            "Screen",
-                            "radius - $radius a-$a b-$b angle-$angle cos-${cos(angle)} cos-pi-${
-                                cos(270f * ((22f / 7f) / 180f))
-                            }"
-                        )
-                        drawPoints(
-                            listOf(Offset(center.x, 0f)),
-                            pointMode = PointMode.Points,
-                            color = PrimaryPink,
+                            color = PrimaryPink.copy(alpha = blurValue),
                             strokeWidth = (30f),
                             cap = StrokeCap.Round
                         )
